@@ -1,0 +1,38 @@
+---
+import BlogPost from '../../layouts/BlogPost.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+const { slug } = Astro.params;
+
+let res = await fetch(`https://developer.wordpress.org/news/wp-json/wp/v2/posts?slug=${slug}&_embed`);
+let [post] = await res.json();
+
+// The getStaticPaths() is required for static Astro sites.
+// If using SSR, you will not need this function.
+export async function getStaticPaths() {
+  let data = await fetch("https://developer.wordpress.org/news/wp-json/wp/v2/posts?per_page=21");
+  let posts = await data.json();
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post: post },
+  }));
+}
+---
+
+<BlogPost title={post.title.rendered}>
+	<article>
+    <div class="hero-image">
+		  <img width={1020} height={510} src={typeof post._embedded['wp:featuredmedia'] !== "undefined" ? post._embedded['wp:featuredmedia']['0'].media_details.sizes.large.source_url : 'https://images.pexels.com/photos/270404/pexels-photo-270404.jpeg'} alt="" />
+    </div>
+    <div class="prose">
+      <div class="title">
+        <h1 set:html={post.title.rendered} />
+        <FormattedDate date={post.date} />
+      </div>
+      <hr />
+      <slot />
+    </div>
+		<Fragment set:html={post.content.rendered} />
+	</article>
+</BlogPost>
