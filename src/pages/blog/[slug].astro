@@ -2,6 +2,8 @@
 import BlogPost from '../../layouts/BlogPost.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 
+import { Image } from 'astro:assets';
+
 const { slug } = Astro.params;
 
 let res = await fetch(`https://developer.wordpress.org/news/wp-json/wp/v2/posts?slug=${slug}&_embed`);
@@ -23,7 +25,7 @@ export async function getStaticPaths() {
 <BlogPost title={post.title.rendered}>
 	<article>
     <div class="hero-image">
-		  <img width={1020} height={510} src={typeof post._embedded['wp:featuredmedia'] !== "undefined" ? post._embedded['wp:featuredmedia']['0'].media_details.sizes.large.source_url : 'https://images.pexels.com/photos/270404/pexels-photo-270404.jpeg'} alt="" />
+		  <Image width={1020} height={510} src={typeof post._embedded['wp:featuredmedia'] !== "undefined" ? post._embedded['wp:featuredmedia']['0'].media_details.sizes.large.source_url : 'https://images.pexels.com/photos/270404/pexels-photo-270404.jpeg'} alt="" />
     </div>
     <div class="prose">
       <div class="title">
